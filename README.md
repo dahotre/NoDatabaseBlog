@@ -1,19 +1,10 @@
-SpringMVCStarter
-================
+NoDatabaseBlog
+==============
 
-A starter skeleton for Spring MVC
-
-### Has-a
-1. Basic spring mvc web initialization without Spring data
-2. Logging with slf4j
-3. Common sense CSS JS libs from CDN. Typeform for feedback.
-4. debug cookie can be set by query param debug=true
-5. Authorization of controller actions via @Authable annotation
-6. Heroku-ready with Procfile, deploy plugin and or git push heroku master
+A Blog created using Spring MVC. Evernote is used to create/update the blog posts.
 
 ### How to use
 1. If you want to suggest changes, then fork and send a pull request. Or just add an issue.
-2. If you want to get started with your Spring MVC app using this skeleton, then DO NOT git clone. Instead perform git archive as suggested in http://stackoverflow.com/questions/160608/do-a-git-export-like-svn-export
 
 ### What do I do after downloading?
 1. Ensure you have Java 1.8 and Maven 3.2.3 installed.
@@ -24,14 +15,6 @@ A starter skeleton for Spring MVC
   2. `java $JAVA_OPTS -jar target/dependency/jetty-runner.jar --port $PORT target/*.war` from the app dir. This is what foreman would do too.
   3. Another way is to mvn tomcat7:run. This can be done from IntelliJ CE from the Plugins section of the 'Maven projects' pane.
 5. 4.1 and 4.2 will host the app on localhost:5000, whereas tomcat7 will host on localhost:8080, by default. Confirm that a simple HTML page is displayed and has a title tag in head with Company.com as a value.
-
-### Initialize git
-1. `git init`
-2. `git add . ` The default `.gitignore` will take care of some common default files.
-3. `git commit -m "initial commit"`
-4. If you wish to set up a github or bitbucket repo, go to their respective web consoles and create a repo. It will give you a `.git` URL such as `https://github.com/dahotre/SpringMVCStarter.git`
-5. `git remote add origin URL_FROM_ABOVE.git`
-6. `git push -u origin master`
 
 ### Deploying to Heroku
 1. `heroku create`

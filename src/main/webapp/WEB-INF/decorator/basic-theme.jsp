@@ -5,26 +5,19 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <link rel="shortcut icon" href="favicon.ico">
-  <link rel="icon" href="icon.png">
-  <link rel="apple-touch-icon" href="touch-icon.png">
+  <link rel="shortcut icon" href="/favicon.ico">
+  <link rel="icon" href="/icon.png">
+  <link rel="apple-touch-icon" href="/touch-icon.png">
 
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet" >
-  <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet" >
+  <link rel="stylesheet" href="https://cdn.rawgit.com/twbs/bootstrap/v4-dev/dist/css/bootstrap.css">
   <link href='//fonts.googleapis.com/css?family=Merriweather:300,300italic,700|Merriweather+Sans:300,300italic'
       rel='stylesheet' type='text/css' >
 
-  <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-  <!--[if lt IE 9]>
-    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-    <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
-  <![endif]-->
-
-  <link href="resources/css/app.css" rel="stylesheet" >
+  <link href="/resources/css/app.css" rel="stylesheet" >
 
   <spring:message code="app.name" var="appName" />
   <title><decorator:title default="${appName}"/></title>
@@ -83,10 +76,10 @@
     </div>
     <%-- JavaScript Libs And main application.js
     ================================================== --%>
-    <script src="//code.jquery.com/jquery-2.1.1.min.js"></script>
-    <script src="//code.jquery.com/ui/2.1.1/jquery-ui.min.js"></script>
-    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
-    <script src="resources/js/app.js"></script>
+    <!-- jQuery first, then Bootstrap JS. -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="https://cdn.rawgit.com/twbs/bootstrap/v4-dev/dist/js/bootstrap.js"></script>
+    <script src="/resources/js/app.js"></script>
 
     <decorator:getProperty property="page.arbitraryScript" />
 
