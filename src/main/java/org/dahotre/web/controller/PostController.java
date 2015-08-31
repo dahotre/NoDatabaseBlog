@@ -43,7 +43,8 @@ public class PostController {
     return new ModelAndView(ViewNames.POSTS_SHOW)
         .addObject("title", note.getTitle())
         .addObject("content", convertToHtml(note))
-        .addObject("tags", note.getTagNames());
+        .addObject("noteTagIds", note.getTagGuids())
+        .addObject("guid", guid);
   }
 
   @RequestMapping("/{guid}/title/{urlTitle}")
@@ -88,6 +89,7 @@ public class PostController {
           mediaElem.attr("src", String.format("%sres/%s", publicUserInfo.getWebApiUrlPrefix(), resource.getGuid()));
           mediaElem.attr("height", String.valueOf(resource.getHeight()));
           mediaElem.attr("width", String.valueOf(resource.getWidth()));
+          mediaElem.attr("class", "img-responsive");
         }
       });
     }

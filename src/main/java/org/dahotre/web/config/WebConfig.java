@@ -11,6 +11,8 @@ import com.evernote.edam.error.EDAMUserException;
 import com.evernote.edam.userstore.PublicUserInfo;
 import com.evernote.thrift.TException;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
@@ -47,6 +49,8 @@ public class WebConfig extends WebMvcConfigurerAdapter {
   @Value("#{systemEnvironment['EVERNOTE_USERNAME']}")
   private String evernoteUsername;
 
+  private static final Logger LOG = LoggerFactory.getLogger(WebConfig.class);
+
   @Bean
   public NoteStoreClient noteStoreClient() throws TException, EDAMUserException, EDAMSystemException {
       return clientFactory().createNoteStoreClient();
@@ -74,6 +78,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     LocaleChangeInterceptor localeChangeInterceptor = new LocaleChangeInterceptor();
     localeChangeInterceptor.setParamName("lang");
     registry.addInterceptor(localeChangeInterceptor);
+    registry.addInterceptor(requestInterceptor());
   }
 
   @Bean
@@ -102,5 +107,10 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     // # -1 : never reload, 0 always reload
     messageSource.setCacheSeconds(0);
     return messageSource;
+  }
+
+  @Bean
+  public RequestInterceptor requestInterceptor() {
+    return new RequestInterceptor();
   }
 }

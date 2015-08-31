@@ -5,10 +5,11 @@
 <!DOCTYPE html>
 <html>
 <head>
+<!--
   <link rel="shortcut icon" href="/favicon.ico">
   <link rel="icon" href="/icon.png">
   <link rel="apple-touch-icon" href="/touch-icon.png">
-
+-->
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -26,6 +27,7 @@
 <body itemscope itemtype="http://schema.org/WebPage">
 
   <div>
+    <%@ include file="navbar.jsp" %>
     <c:if test="${param.debug == 'true' or (param.debug != 'false' and not empty cookie.debug) }">
       <style>
         .debug {
@@ -61,13 +63,6 @@
 
   <%-- A placeholder to display sections outside of main content --%>
   <decorator:getProperty property="page.outsideContainer" />
-
-  <div class="footer navbar-fixed-bottom">
-    <span class="pull-right stickyFeedback">
-      <a class="typeform-share link" href="#" data-mode="2"
-        target="_blank"><i class="fa fa-comment-o"></i><spring:message code="app.feedback" /></a>
-    </span>
-  </div>
   <footer class="container">
     <div class="row">
       <div class="col-xs-12">
@@ -83,8 +78,6 @@
 
     <decorator:getProperty property="page.arbitraryScript" />
 
-    <%-- Typeform script --%>
-    <script>(function(){var qs,js,q,s,d=document,gi=d.getElementById,ce=d.createElement,gt=d.getElementsByTagName,id='typef_orm',b='https://s3-eu-west-1.amazonaws.com/share.typeform.com/';if(!gi.call(d,id)){js=ce.call(d,'script');js.id=id;js.src=b+'share.js';q=gt.call(d,'script')[0];q.parentNode.insertBefore(js,q)}})()</script>
   </footer>
 </body>
 </html>
