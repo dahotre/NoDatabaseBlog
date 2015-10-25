@@ -27,7 +27,7 @@
     <guava.version>18.0</guava.version>
     <commons.lang.version>3.4</commons.lang.version>
     <commons.codec.version>1.6</commons.codec.version>
-    <jetty.runner.version>9.3.2.v20150730</jetty.runner.version>
+    <jetty.runner.version>9.3.0.M2</jetty.runner.version>
     <javax.validation>1.1.0.Final</javax.validation>
     <hibernate.validator>5.1.1.Final</hibernate.validator>
     <evernote.version>1.25.1</evernote.version>
@@ -293,7 +293,7 @@
             <groupId>com.heroku.sdk</groupId>
             <artifactId>heroku-maven-plugin</artifactId>
             <configuration>
-              <appName>immense-plateau-6256</appName>
+              <appName>nameless-temple-2557</appName>
             </configuration>
           </plugin>
         </plugins>
@@ -307,7 +307,7 @@
             <groupId>com.heroku.sdk</groupId>
             <artifactId>heroku-maven-plugin</artifactId>
             <configuration>
-              <appName>immense-plateau-6256-prod</appName>
+              <appName>nameless-temple-2557-prod</appName>
             </configuration>
           </plugin>
         </plugins>
