@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<%@ taglib uri="http://www.opensymphony.com/sitemesh/decorator" prefix="decorator" %>
-<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://www.opensymphony.com/sitemesh/decorator" prefix="decorator" %> <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%> <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -23,6 +21,15 @@
   <spring:message code="app.name" var="appName" />
   <title><decorator:title default="${appName}"/></title>
   <decorator:head/>
+  <style>
+    body {
+     font-family: "Merriweather Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
+    }
+    p {
+      font-family: 'Merriweather', Georgia, serif;
+      font-weight: 300;
+    }
+  </style>
 </head>
 <body itemscope itemtype="http://schema.org/WebPage">
 

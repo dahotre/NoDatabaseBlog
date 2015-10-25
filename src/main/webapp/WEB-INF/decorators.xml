@@ -6,6 +6,7 @@
     <pattern>*.txt</pattern>
     <pattern>*.css</pattern>
     <pattern>*.js</pattern>
+    <pattern>/images/*</pattern>
   </excludes>
 
   <decorator name="basic-theme" page="basic-theme.jsp">

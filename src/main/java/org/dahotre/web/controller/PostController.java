@@ -1,9 +1,7 @@
 package org.dahotre.web.controller;
 
-import com.evernote.clients.NoteStoreClient;
 import com.evernote.edam.type.Note;
 import com.evernote.edam.type.Resource;
-import com.evernote.edam.userstore.PublicUserInfo;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang3.StringUtils;
 import org.dahotre.web.common.ViewNames;
@@ -32,14 +30,11 @@ public class PostController {
   Logger LOG = LoggerFactory.getLogger(PostController.class);
 
   @Autowired
-  NoteStoreClient noteStoreClient;
-
-  @Autowired
-  PublicUserInfo publicUserInfo;
+  EvernoteSyncClient evernoteSyncClient;
 
   @RequestMapping("/{guid}")
   public ModelAndView show(@PathVariable String guid) throws Exception {
-    final Note note = noteStoreClient.getNote(guid, true, false, false, false);
+    final Note note = evernoteSyncClient.getNote(guid, true, false, false, false);
     return new ModelAndView(ViewNames.POSTS_SHOW)
         .addObject("title", note.getTitle())
         .addObject("content", convertToHtml(note))
@@ -60,6 +55,7 @@ public class PostController {
     Element enNoteElement = document.getElementsByTag("en-note").get(0);
 
     enNoteElement.tagName("div");
+    enNoteElement.attr("class", "col-sm-12");
 
     enNoteElement.getElementsByTag("en-todo").forEach(todo -> {
       todo.tagName("input");
@@ -86,10 +82,18 @@ public class PostController {
           final Resource resource = imageHashToResourceMap.get(hash);
 
           mediaElem.tagName("img");
-          mediaElem.attr("src", String.format("%sres/%s", publicUserInfo.getWebApiUrlPrefix(), resource.getGuid()));
-          mediaElem.attr("height", String.valueOf(resource.getHeight()));
-          mediaElem.attr("width", String.valueOf(resource.getWidth()));
-          mediaElem.attr("class", "img-responsive");
+          mediaElem.attr("src", String.format("/images/%s", resource.getGuid()));
+
+          Double height = new Double(resource.getHeight());
+          Double width = new Double(resource.getWidth());
+          if (width > 640d) {
+            height = height * 640d / width;
+            width = 640d;
+          }
+
+          mediaElem.attr("height", String.valueOf(height.shortValue()));
+          mediaElem.attr("width", String.valueOf(width.shortValue()));
+          mediaElem.attr("class", "img-responsive center-block");
         }
       });
     }

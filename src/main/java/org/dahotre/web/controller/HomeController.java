@@ -1,11 +1,13 @@
 package org.dahotre.web.controller;
 
-import com.evernote.clients.NoteStoreClient;
+import com.evernote.edam.error.EDAMNotFoundException;
+import com.evernote.edam.error.EDAMSystemException;
+import com.evernote.edam.error.EDAMUserException;
 import com.evernote.edam.notestore.NoteFilter;
 import com.evernote.edam.notestore.NoteList;
 import com.evernote.edam.type.Note;
 import com.evernote.edam.type.Notebook;
-import com.evernote.edam.userstore.PublicUserInfo;
+import com.evernote.thrift.TException;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.dahotre.web.common.EvernoteData;
@@ -26,11 +28,9 @@ import java.util.stream.Collectors;
 @RequestMapping("/")
 public class HomeController {
 
+  public static final int PAGE_SIZE = 20;
   @Autowired
-  NoteStoreClient noteStoreClient;
-
-  @Autowired
-  PublicUserInfo publicUserInfo;
+  EvernoteSyncClient evernoteSyncClient;
 
   @RequestMapping("")
   public ModelAndView getHome(@RequestParam(name = "page", required = false, defaultValue = "1") Integer page
@@ -44,7 +44,7 @@ public class HomeController {
       isHomePage = false;
     }
 
-    final Notebook defaultNotebook = noteStoreClient.getDefaultNotebook();
+    final Notebook defaultNotebook = evernoteSyncClient.getDefaultNotebook();
     NoteFilter noteFilter = new NoteFilter();
     noteFilter.setNotebookGuid(defaultNotebook.getGuid());
     noteFilter.setAscending(false);
@@ -56,27 +56,27 @@ public class HomeController {
       noteFilter.setTagGuids(Lists.newArrayList(tagId));
       isHomePage = false;
     }
-    final Integer noteCount = noteStoreClient.findNoteCounts(noteFilter, false)
+    final Integer noteCount = evernoteSyncClient.findNoteCounts(noteFilter, false)
         .getNotebookCounts().values().stream()
         .findFirst().get();
 
     NoteList noteList;
     if (isHomePage) {
-      final int liveUpdateCount = noteStoreClient.getSyncState().getUpdateCount();
+      final int liveUpdateCount = evernoteSyncClient.getSyncState().getUpdateCount();
       if (liveUpdateCount > EvernoteData.updateCount || EvernoteData.homePageNoteList == null) {
         EvernoteData.updateCount = liveUpdateCount;
-        EvernoteData.homePageNoteList = noteStoreClient.findNotes(noteFilter, page - 1, 20);
+        EvernoteData.homePageNoteList = findNotes(page, noteFilter);
       }
       noteList = EvernoteData.homePageNoteList;
     }
     else {
-      noteList = noteStoreClient.findNotes(noteFilter, page - 1, 20);
+      noteList = findNotes(page, noteFilter);
     }
 
     final Map<String, String> noteToImgUrlMap = noteList.getNotes().parallelStream()
         .filter(note -> note != null && note.getResources() != null && note.getResourcesIterator().hasNext())
         .collect(Collectors.toMap(Note::getGuid
-                , note -> String.format("%sres/%s", publicUserInfo.getWebApiUrlPrefix(), note.getResourcesIterator().next().getGuid()))
+                , note -> String.format("/images/%s", note.getResourcesIterator().next().getGuid()))
         );
 
     return new ModelAndView(ViewNames.HOME)
@@ -85,8 +85,12 @@ public class HomeController {
         .addObject("notes", noteList.getNotes())
         .addObject("noteToImgUrlMap", noteToImgUrlMap)
         .addObject("page", page)
-        .addObject("totalPages", (noteCount/21) + 1)
+        .addObject("totalPages", (noteCount/(PAGE_SIZE + 1)) + 1)
         .addObject("search", query)
         .addObject("tag", tag);
+  }
+
+  private NoteList findNotes(@RequestParam(name = "page", required = false, defaultValue = "1") Integer page, NoteFilter noteFilter) throws EDAMUserException, EDAMSystemException, EDAMNotFoundException, TException {
+    return evernoteSyncClient.findNotes(noteFilter, (page - 1) * PAGE_SIZE, PAGE_SIZE);
   }
 }

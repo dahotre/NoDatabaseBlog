@@ -1,6 +1,7 @@
-<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%> <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<head>
+  <%@include file="metaSchemas.jsp" %>
+</head>
 <div class="container">
   <h1><c:out value="${title}" /></h1>
   <article class="row">

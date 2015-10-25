@@ -1,5 +1,6 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
 <div class="container">
   <div class="row">
@@ -12,12 +13,18 @@
   </div>
   <div class="card-columns">
   <c:forEach var="note" items="${notes}">
-    <a class="card card-block" href="/posts/${note.guid}/title/${note.title}">
+    <c:set var="slug" value="${fn:toLowerCase(fn:replace(note.title, ' ', '-'))}" />
+    <a class="card" href="/posts/${note.guid}/title/${slug}">
       <c:set var="noteImgUrl" value="${noteToImgUrlMap[note.guid]}" />
-      <c:if test="${not empty noteImgUrl}">
-        <img class="card-img-top img-responsive" src="${noteImgUrl}" />
-      </c:if>
-      <div class="card-title">${note.title}</div>
+      <c:choose>
+        <c:when test="${not empty noteImgUrl}">
+          <img class="card-img-top img-responsive center-block" src="${noteImgUrl}" />
+          <div class="card-footer small">${note.title}</div>
+        </c:when>
+        <c:otherwise>
+          <div class="card-block small">${note.title}</div>
+        </c:otherwise>
+      </c:choose>
     </a>
   </c:forEach>
   </div>

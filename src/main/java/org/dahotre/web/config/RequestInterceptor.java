@@ -1,9 +1,9 @@
 package org.dahotre.web.config;
 
-import com.evernote.clients.NoteStoreClient;
 import com.google.common.base.Strings;
 import org.dahotre.web.common.Cookies;
 import org.dahotre.web.common.EvernoteData;
+import org.dahotre.web.controller.EvernoteSyncClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,7 @@ public class RequestInterceptor implements HandlerInterceptor {
   private static final Logger LOGGER = LoggerFactory.getLogger(RequestInterceptor.class);
 
   @Autowired
-  NoteStoreClient noteStoreClient;
+  EvernoteSyncClient evernoteSyncClient;
 
   @Override
   public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
@@ -46,13 +46,15 @@ public class RequestInterceptor implements HandlerInterceptor {
   @Override
   public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
       ModelAndView modelAndView) throws Exception {
-    final int liveUpdateCount = noteStoreClient.getSyncState().getUpdateCount();
-    if (liveUpdateCount > EvernoteData.updateCount || EvernoteData.globalTags == null) {
-      EvernoteData.updateCount = liveUpdateCount;
-      EvernoteData.globalTags = noteStoreClient.listTags();
-    }
+    if (modelAndView != null) {
+      final int liveUpdateCount = evernoteSyncClient.getSyncState().getUpdateCount();
+      if (liveUpdateCount > EvernoteData.updateCount || EvernoteData.globalTags == null) {
+        EvernoteData.updateCount = liveUpdateCount;
+        EvernoteData.globalTags = evernoteSyncClient.listTags();
+      }
 
-    modelAndView.addObject("tags", EvernoteData.globalTags);
+      modelAndView.addObject("tags", EvernoteData.globalTags);
+    }
   }
 
   @Override
