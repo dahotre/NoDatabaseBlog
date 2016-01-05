@@ -1,4 +1,4 @@
-package org.dahotre.web.controller;
+package org.dahotre.web.helper;
 
 import com.evernote.clients.NoteStoreClient;
 import com.evernote.edam.error.EDAMNotFoundException;

@@ -1,5 +1,12 @@
 package org.dahotre.web.config;
 
+import com.amazonaws.ClientConfiguration;
+import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.regions.Region;
+import com.amazonaws.regions.Regions;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3Client;
 import com.evernote.auth.EvernoteAuth;
 import com.evernote.auth.EvernoteService;
 import com.evernote.clients.ClientFactory;
@@ -38,6 +45,7 @@ import java.util.Locale;
 @ComponentScan(basePackages = {"org.dahotre"})
 public class WebConfig extends WebMvcConfigurerAdapter {
 
+  private static final Logger LOG = LoggerFactory.getLogger(WebConfig.class);
   @Value("#{systemEnvironment['EVERNOTE_KEY']}")
   private String evernoteKey;
   @Value("#{systemEnvironment['EVERNOTE_SECRET']}")
@@ -48,9 +56,24 @@ public class WebConfig extends WebMvcConfigurerAdapter {
   private String evernoteToken;
   @Value("#{systemEnvironment['EVERNOTE_USERNAME']}")
   private String evernoteUsername;
+  @Value("#{systemEnvironment['AWS_ACCESS']}")
+  private String amazonAWSAccessKey;
+  @Value("#{systemEnvironment['AWS_SECRET']}")
+  private String amazonAWSSecretKey;
 
-  private static final Logger LOG = LoggerFactory.getLogger(WebConfig.class);
+  @Bean
+  public AWSCredentials amazonAWSCredentials() {
+    return new BasicAWSCredentials(amazonAWSAccessKey, amazonAWSSecretKey);
+  }
 
+  @Bean(name = "s3")
+  public AmazonS3 s3() {
+    ClientConfiguration clientConfiguration = new ClientConfiguration();
+    clientConfiguration.setUseGzip(true);
+    AmazonS3Client client = new AmazonS3Client(amazonAWSCredentials(), clientConfiguration);
+    client.setRegion(Region.getRegion(Regions.US_EAST_1));
+    return client;
+  }
   @Bean
   public NoteStoreClient noteStoreClient() throws TException, EDAMUserException, EDAMSystemException {
       return clientFactory().createNoteStoreClient();

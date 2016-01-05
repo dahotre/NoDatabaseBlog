@@ -3,7 +3,7 @@ package org.dahotre.web.config;
 import com.google.common.base.Strings;
 import org.dahotre.web.common.Cookies;
 import org.dahotre.web.common.EvernoteData;
-import org.dahotre.web.controller.EvernoteSyncClient;
+import org.dahotre.web.helper.EvernoteSyncClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -5,6 +5,8 @@ import com.evernote.edam.type.Resource;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang3.StringUtils;
 import org.dahotre.web.common.ViewNames;
+import org.dahotre.web.helper.EvernoteSyncClient;
+import org.dahotre.web.helper.S3Helper;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -27,14 +29,29 @@ import java.util.stream.Collectors;
 @RequestMapping("/posts")
 public class PostController {
 
+  public static final boolean WITH_CONTENT = true;
+  public static final boolean WITHOUT_RESOURCES_DATA = false;
+  public static final boolean WITHOUT_RESOURCES_RECOGNITION = false;
+  public static final boolean WITHOUT_RESOURCES_ALTERNATE_DATA = false;
   Logger LOG = LoggerFactory.getLogger(PostController.class);
 
   @Autowired
   EvernoteSyncClient evernoteSyncClient;
 
+  @Autowired
+  S3Helper s3Helper;
+
+
   @RequestMapping("/{guid}")
   public ModelAndView show(@PathVariable String guid) throws Exception {
-    final Note note = evernoteSyncClient.getNote(guid, true, false, false, false);
+    final Note note = evernoteSyncClient.getNote(guid, WITH_CONTENT, WITHOUT_RESOURCES_DATA, WITHOUT_RESOURCES_RECOGNITION, WITHOUT_RESOURCES_ALTERNATE_DATA);
+
+    //Check if the note's resource are already uploaded by looking up in S3. If not, then upload it in the site bucket.
+    if (note.getResourcesSize() > 0) {
+      for (Resource resource : note.getResources()) {
+        s3Helper.checkAndPut(resource);
+      }
+    }
     return new ModelAndView(ViewNames.POSTS_SHOW)
         .addObject("title", note.getTitle())
         .addObject("content", convertToHtml(note))
@@ -82,7 +99,7 @@ public class PostController {
           final Resource resource = imageHashToResourceMap.get(hash);
 
           mediaElem.tagName("img");
-          mediaElem.attr("src", String.format("/images/%s", resource.getGuid()));
+          mediaElem.attr("src", s3Helper.generateS3ImageUrl(resource.getGuid()));
 
           Double height = new Double(resource.getHeight());
           Double width = new Double(resource.getWidth());

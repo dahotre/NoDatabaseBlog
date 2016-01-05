@@ -12,12 +12,17 @@ import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.dahotre.web.common.EvernoteData;
 import org.dahotre.web.common.ViewNames;
+import org.dahotre.web.helper.EvernoteSyncClient;
+import org.dahotre.web.helper.S3Helper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -29,8 +34,11 @@ import java.util.stream.Collectors;
 public class HomeController {
 
   public static final int PAGE_SIZE = 20;
+  private static final Logger LOG = LoggerFactory.getLogger(HomeController.class);
   @Autowired
   EvernoteSyncClient evernoteSyncClient;
+  @Autowired
+  S3Helper s3Helper;
 
   @RequestMapping("")
   public ModelAndView getHome(@RequestParam(name = "page", required = false, defaultValue = "1") Integer page
@@ -73,16 +81,30 @@ public class HomeController {
       noteList = findNotes(page, noteFilter);
     }
 
-    final Map<String, String> noteToImgUrlMap = noteList.getNotes().parallelStream()
+    final List<Note> notes = noteList.getNotes();
+    notes.stream()
+        .filter(eachNote -> eachNote.getResourcesSize() > 0)
+        .forEach(
+            note -> note.getResources().forEach(
+                resource -> {
+                  try {
+                    s3Helper.checkAndPut(resource);
+                  } catch (EDAMUserException | EDAMSystemException | EDAMNotFoundException | TException e) {
+                    LOG.error("Problem in checkAndPut resource " + resource.getGuid(), e);
+                  }
+                }
+            )
+        );
+    final Map<String, String> noteToImgUrlMap = notes.parallelStream()
         .filter(note -> note != null && note.getResources() != null && note.getResourcesIterator().hasNext())
         .collect(Collectors.toMap(Note::getGuid
-                , note -> String.format("/images/%s", note.getResourcesIterator().next().getGuid()))
+            , note -> s3Helper.generateS3ImageUrl(note.getResourcesIterator().next().getGuid()))
         );
 
     return new ModelAndView(ViewNames.HOME)
         .addObject("hello", "Hello world!")
         .addObject("noteCount", noteCount)
-        .addObject("notes", noteList.getNotes())
+        .addObject("notes", notes)
         .addObject("noteToImgUrlMap", noteToImgUrlMap)
         .addObject("page", page)
         .addObject("totalPages", (noteCount/(PAGE_SIZE + 1)) + 1)

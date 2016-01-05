@@ -18,7 +18,7 @@
       <c:set var="noteImgUrl" value="${noteToImgUrlMap[note.guid]}" />
       <c:choose>
         <c:when test="${not empty noteImgUrl}">
-          <img class="card-img-top img-responsive center-block" src="${noteImgUrl}" />
+          <img class="card-img-top img-responsive center-block" src="${noteImgUrl}" style="max-width:100%;max-height:100%;"/>
           <div class="card-footer small">${note.title}</div>
         </c:when>
         <c:otherwise>
