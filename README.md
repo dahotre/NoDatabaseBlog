@@ -9,9 +9,9 @@ A Blog created using Spring MVC. Evernote is used to create/update the blog post
 ### What do I do after downloading?
 1. Ensure you have Java 1.8 and Maven 3.2.3 installed.
 2. `mvn clean install -U` in the app dir.
-3. If you are planning to use Heroku, then download the Heroku toolbelt. This will also download `foreman`.
+3. If you are planning to use Heroku, then download the Heroku toolbelt. This will also download `heroku local`.
 4. Deploy.
-  1. One way to deploy the application locally is to run `foreman start web`
+  1. One way to deploy the application locally is to run `heroku local web`
   2. `java $JAVA_OPTS -jar target/dependency/jetty-runner.jar --port $PORT target/*.war` from the app dir. This is what foreman would do too.
   3. Another way is to mvn tomcat7:run. This can be done from IntelliJ CE from the Plugins section of the 'Maven projects' pane.
 5. 4.1 and 4.2 will host the app on localhost:5000, whereas tomcat7 will host on localhost:8080, by default. Confirm that a simple HTML page is displayed and has a title tag in head with Company.com as a value.

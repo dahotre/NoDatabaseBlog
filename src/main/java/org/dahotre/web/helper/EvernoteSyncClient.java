@@ -13,6 +13,7 @@ import com.evernote.edam.type.Notebook;
 import com.evernote.edam.type.Tag;
 import com.evernote.thrift.TException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -26,6 +27,9 @@ public class EvernoteSyncClient {
   @Autowired
   NoteStoreClient noteStoreClient;
 
+  @Value("#{systemEnvironment['EVERNOTE_NOTEBOOK_NAME']}")
+  private String evernoteNotebookName;
+
   public synchronized byte[] getImageBytes(String guid) throws EDAMUserException, EDAMSystemException, TException, EDAMNotFoundException {
     return noteStoreClient.getResourceData(guid);
   }
@@ -34,8 +38,8 @@ public class EvernoteSyncClient {
     return noteStoreClient.getSyncState();
   }
 
-  public synchronized List<Tag> listTags() throws TException, EDAMUserException, EDAMSystemException {
-    return noteStoreClient.listTags();
+  public synchronized List<Tag> listTags() throws TException, EDAMUserException, EDAMSystemException, EDAMNotFoundException {
+    return noteStoreClient.listTagsByNotebook(getDefaultNotebook().getGuid());
   }
 
   public synchronized NoteList findNotes(NoteFilter noteFilter, int offset, int pageSize) throws EDAMUserException, EDAMSystemException, TException, EDAMNotFoundException {
@@ -47,7 +51,9 @@ public class EvernoteSyncClient {
   }
 
   public synchronized Notebook getDefaultNotebook() throws TException, EDAMUserException, EDAMSystemException {
-    return noteStoreClient.getDefaultNotebook();
+    return noteStoreClient.listNotebooks().stream()
+        .filter(notebook -> notebook.getName().equalsIgnoreCase(evernoteNotebookName))
+        .findFirst().get();
   }
 
   public synchronized Note getNote(String guid, boolean withContent, boolean withResourcesData, boolean withResourcesRecognition, boolean withResourcesAlternateData) throws EDAMUserException, EDAMSystemException, TException, EDAMNotFoundException {

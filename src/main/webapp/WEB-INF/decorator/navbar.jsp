@@ -1,7 +1,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <nav class="navbar navbar-light">
-  <a class="navbar-brand" href="/">&#x1F373; <spring:message code="app.name" /></a>
+  <a class="navbar-brand" href="/"><img src="//dahotre.github.io/assets/logo.jpg" height="75px" width="75px"/> <spring:message code="app.name" /></a>
   <div class="collapse navbar-toggleable-xs" id="collapsibleNav">
     <ul class="nav navbar-nav">
       <c:forEach var="currTag" items="${tags}">
