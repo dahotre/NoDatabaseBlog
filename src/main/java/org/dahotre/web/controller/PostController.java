@@ -10,6 +10,7 @@ import org.dahotre.web.helper.S3Helper;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.parser.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.Date;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -53,6 +55,7 @@ public class PostController {
       }
     }
     return new ModelAndView(ViewNames.POSTS_SHOW)
+        .addObject("created", new Date(note.getCreated()))
         .addObject("title", note.getTitle())
         .addObject("content", convertToHtml(note))
         .addObject("noteTagIds", note.getTagGuids())
@@ -98,19 +101,23 @@ public class PostController {
             && StringUtils.isNotBlank(hash)) {  // has attr hash
           final Resource resource = imageHashToResourceMap.get(hash);
 
-          mediaElem.tagName("img");
-          mediaElem.attr("src", s3Helper.generateS3ImageUrl(resource.getGuid()));
+          Element imgElement = new Element(Tag.valueOf("img"), mediaElem.baseUri());
+
+          imgElement.attr("src", s3Helper.generateS3ImageUrl(resource.getGuid()));
 
           Double height = new Double(resource.getHeight());
           Double width = new Double(resource.getWidth());
-          if (width > 640d) {
-            height = height * 640d / width;
-            width = 640d;
+          if (width > 480d) {
+            height = height * 480d / width;
+            width = 480d;
           }
 
-          mediaElem.attr("height", String.valueOf(height.shortValue()));
-          mediaElem.attr("width", String.valueOf(width.shortValue()));
-          mediaElem.attr("class", "img-responsive center-block");
+          imgElement.attr("height", String.valueOf(height.shortValue()));
+          imgElement.attr("width", String.valueOf(width.shortValue()));
+          imgElement.attr("class", "img-responsive center-block");
+
+          mediaElem.tagName("figure");
+          mediaElem.appendChild(imgElement);
         }
       });
     }

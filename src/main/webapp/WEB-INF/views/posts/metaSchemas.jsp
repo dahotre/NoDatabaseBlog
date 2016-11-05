@@ -1,5 +1,5 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%><%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<spring:message code="app.name" var="appName" /><c:set var="keywords" value="" /> <c:forEach var="noteTagId" items="${noteTagIds}"> <c:forEach var="globalTag" items="${tags}"> <c:if test="${globalTag.guid eq noteTagId}"> <c:set var="keywords" value="${keywords} ${globalTag.name}" /> </c:if> </c:forEach> </c:forEach>
+<c:set var="keywords" value="" /> <c:forEach var="noteTagId" items="${noteTagIds}"> <c:forEach var="globalTag" items="${tags}"> <c:if test="${globalTag.guid eq noteTagId}"> <c:set var="keywords" value="${keywords} ${globalTag.name}" /> </c:if> </c:forEach> </c:forEach>
 <title>${appName} - ${title}</title>
 <meta name="description" content="Recipe for ${title}"/>
 <meta name="keywords" content="${keywords}"/>

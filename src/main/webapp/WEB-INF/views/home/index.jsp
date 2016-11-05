@@ -14,15 +14,15 @@
   <div class="card-columns">
   <c:forEach var="note" items="${notes}">
     <c:set var="slug" value="${fn:toLowerCase(fn:replace(note.title, ' ', '-'))}" />
-    <a class="card" href="/posts/${note.guid}/title/${slug}">
+    <a class="card font-weight-bold text-black" href="/posts/${note.guid}/title/${slug}">
       <c:set var="noteImgUrl" value="${noteToImgUrlMap[note.guid]}" />
       <c:choose>
         <c:when test="${not empty noteImgUrl}">
           <img class="card-img-top img-responsive center-block" src="${noteImgUrl}" style="max-width:100%;max-height:100%;"/>
-          <div class="card-footer small">${note.title}</div>
+          <div class="card-footer">${note.title}</div>
         </c:when>
         <c:otherwise>
-          <div class="card-block small">${note.title}</div>
+          <div class="card-block">${note.title}</div>
         </c:otherwise>
       </c:choose>
     </a>
